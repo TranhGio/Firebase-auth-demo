@@ -27,7 +27,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 this.finish()
             }
             R.id.btnRegister -> {
-                Toast.makeText(this,"Register start activity", Toast.LENGTH_SHORT).show()
                 startActivity(Intent(this, RegisterActivity::class.java))
                 this.finish()
             }

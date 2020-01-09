@@ -1,10 +1,12 @@
 package com.example.firebasedemo
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.firebasedemo.Utils.isEmailValid
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
@@ -56,15 +58,6 @@ class RegisterActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    private fun isEmailValid(email: String?): Boolean {
-        val emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\." +
-                "[a-zA-Z0-9_+&*-]+)*@" +
-                "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
-                "A-Z]{2,7}$"
-        val pat: Pattern = Pattern.compile(emailRegex)
-        return if (email == null) false else pat.matcher(email).matches()
-    }
-
     private fun registerUser(userName: String, password: String) {
         auth.createUserWithEmailAndPassword(userName, password).addOnCompleteListener(this, object :
             OnCompleteListener<AuthResult> {
@@ -75,6 +68,8 @@ class RegisterActivity : AppCompatActivity(), View.OnClickListener {
                         "Register Successfull",
                         Toast.LENGTH_SHORT
                     ).show()
+                    startActivity(Intent(this@RegisterActivity, LoginActivity::class.java))
+                    finish()
                 } else {
                     Toast.makeText(
                         this@RegisterActivity,

@@ -10,6 +10,8 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_register.*
+import java.util.regex.Pattern
+
 
 class RegisterActivity : AppCompatActivity(), View.OnClickListener {
 
@@ -35,16 +37,32 @@ class RegisterActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun onRegister() {
-        if (edtPassword.text.equals(edtPasswordRetype.text)) {
+        val userName = edtUserName.text.toString()
+        val password = edtPassword.text.toString()
+        val retypePassword = edtPasswordRetype.text.toString()
+        if (password != retypePassword) {
             Toast.makeText(this, "Password retype not correct!!!", Toast.LENGTH_SHORT).show()
-        } else if (TextUtils.isEmpty(edtUserName.text) || TextUtils.isEmpty(edtPassword.text) || TextUtils.isEmpty(
-                edtPasswordRetype.text
+        } else if (TextUtils.isEmpty(userName) || TextUtils.isEmpty(password) || TextUtils.isEmpty(
+                retypePassword
             )
         ) {
             Toast.makeText(this, "Must be not empty", Toast.LENGTH_SHORT).show()
+        } else if (password.length < 6) {
+            Toast.makeText(this, "Password at less 6 character", Toast.LENGTH_SHORT).show()
+        } else if (!isEmailValid(userName)) {
+            Toast.makeText(this, "Email is not correct", Toast.LENGTH_SHORT).show()
         } else {
-            registerUser(edtUserName.text.toString(), edtPassword.text.toString())
+            registerUser(userName, password)
         }
+    }
+
+    private fun isEmailValid(email: String?): Boolean {
+        val emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\." +
+                "[a-zA-Z0-9_+&*-]+)*@" +
+                "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
+                "A-Z]{2,7}$"
+        val pat: Pattern = Pattern.compile(emailRegex)
+        return if (email == null) false else pat.matcher(email).matches()
     }
 
     private fun registerUser(userName: String, password: String) {

@@ -12,5 +12,4 @@ object Utils {
         val pat: Pattern = Pattern.compile(emailRegex)
         return if (email == null) false else pat.matcher(email).matches()
     }
-
 }

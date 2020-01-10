@@ -2,7 +2,6 @@ package com.example.firebasedemo
 
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -21,7 +20,6 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
 
     private lateinit var auth: FirebaseAuth
     val languages = ArrayList<String>()
-    var databasePreference = FirebaseDatabase.getInstance().reference.child("Users")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,23 +59,25 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
         )
         recyclerView.addItemDecoration(dividerItemDecoration)
         recyclerView.adapter = adapter
-        databasePreference.child("DangVinh").child("Language").addValueEventListener(object :
+        val databasePreference = FirebaseDatabase.getInstance().reference.child("Users")
+        databasePreference.child("FirebaseDemo").addValueEventListener(object :
             ValueEventListener {
+            override fun onDataChange(p0: DataSnapshot) {
+                languages.clear()
+                Log.i("FirebaseDebug", p0.value.toString())
+                p0.children.forEach {
+                    val branch = it.getValue(Branch::class.java)
+                    languages.add("${branch?.name}: ${branch?.email}")
+                }
+                adapter.notifyDataSetChanged()
+            }
+
             override fun onCancelled(p0: DatabaseError) {
                 Toast.makeText(this@HomeActivity, "Fail to read value!!!", Toast.LENGTH_SHORT)
                     .show()
                 Log.i("FirebaseDebug", p0.message)
             }
-
-            override fun onDataChange(p0: DataSnapshot) {
-                languages.clear()
-                p0.children.forEach {
-                    languages.add(it.value.toString())
-                }
-                adapter.notifyDataSetChanged()
-            }
         })
-
     }
 
     override fun onClick(v: View?) {
@@ -88,11 +88,11 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
                 finish()
             }
             R.id.btnAddLanguage -> {
-                databasePreference.child("DangVinh").child("Language")
-                    .child(edtLanguageShortName.text.toString())
-                    .setValue(edtLanguageName.text.toString())
-                edtLanguageShortName.setText("")
-                edtLanguageName.text = Editable.Factory.getInstance().newEditable("")
+//                databasePreference.child("DangVinh").child("Language")
+//                    .child(edtLanguageShortName.text.toString())
+//                    .setValue(edtLanguageName.text.toString())
+//                edtLanguageShortName.setText("")
+//                edtLanguageName.text = Editable.Factory.getInstance().newEditable("")
             }
         }
     }

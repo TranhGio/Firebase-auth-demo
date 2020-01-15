@@ -12,7 +12,6 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_register.*
-import java.util.regex.Pattern
 
 
 class RegisterActivity : AppCompatActivity(), View.OnClickListener {
@@ -44,10 +43,7 @@ class RegisterActivity : AppCompatActivity(), View.OnClickListener {
         val retypePassword = edtPasswordRetype.text.toString()
         if (password != retypePassword) {
             Toast.makeText(this, "Password retype not correct!!!", Toast.LENGTH_SHORT).show()
-        } else if (TextUtils.isEmpty(userName) || TextUtils.isEmpty(password) || TextUtils.isEmpty(
-                retypePassword
-            )
-        ) {
+        } else if (TextUtils.isEmpty(userName) || TextUtils.isEmpty(password) || TextUtils.isEmpty(retypePassword)) {
             Toast.makeText(this, "Must be not empty", Toast.LENGTH_SHORT).show()
         } else if (password.length < 6) {
             Toast.makeText(this, "Password at less 6 character", Toast.LENGTH_SHORT).show()

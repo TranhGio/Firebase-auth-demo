@@ -18,15 +18,17 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="Short Name"
+        app:layout_constraintBottom_toTopOf="@+id/recyclerView"
         app:layout_constraintEnd_toStartOf="@id/edtLanguageName"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/edtLanguageName"
-        android:hint="Language Name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:hint="Language Name"
+        app:layout_constraintBottom_toTopOf="@+id/recyclerView"
         app:layout_constraintEnd_toStartOf="@id/btnAddLanguage"
         app:layout_constraintStart_toEndOf="@id/edtLanguageShortName"
         app:layout_constraintTop_toTopOf="parent" />

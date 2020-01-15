@@ -8,11 +8,14 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.firestore.*
 import kotlinx.android.synthetic.main.activity_home.*
 
 
@@ -26,6 +29,89 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(R.layout.activity_home)
         initView()
         auth = FirebaseAuth.getInstance()
+//        addValueToCloudFireStore()
+        getValueToCloudFireStore()
+    }
+
+    private fun getValueToCloudFireStore() {
+        val firebaseFirestore = FirebaseFirestore.getInstance()
+//        val documentReference = firebaseFirestore.collection("Country").document("Capital")
+//        documentReference.get().addOnCompleteListener(object : OnCompleteListener<DocumentSnapshot> {
+//            override fun onComplete(p0: Task<DocumentSnapshot>) {
+//                if (p0.isSuccessful) {
+//                    Toast.makeText(this@HomeActivity, "Success", Toast.LENGTH_SHORT).show()
+//                    Log.i("FirebaseDemo", p0.result?.data.toString())
+//                } else {
+//                    Toast.makeText(this@HomeActivity, "Fail", Toast.LENGTH_LONG).show()
+//                }
+//            }
+//        })
+        firebaseFirestore.collection("Country").whereEqualTo("VietNam", "Da Nang")
+            .get().addOnCompleteListener(object : OnCompleteListener<QuerySnapshot> {
+                override fun onComplete(p0: Task<QuerySnapshot>) {
+                    if (p0.isSuccessful) {
+                        Toast.makeText(this@HomeActivity, "Success", Toast.LENGTH_SHORT).show()
+                        p0.result?.forEach { Log.i("FirebaseDemo", "Id = ${it.id} : ${it.data}") }
+                    } else {
+                        Toast.makeText(this@HomeActivity, "Fail", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            })
+    }
+
+    private fun addValueToCloudFireStore() {
+        val firebaseFirestore = FirebaseFirestore.getInstance()
+
+        // ---- Add value ----
+//        val cities = HashMap<String, Any>()
+//        cities.put("Japanese", "Tokyo")
+//        cities.put("Korean", "Seoul")
+//        cities.put("VietName", "Ha Noi")
+//        cities.put("Thailand", "Bangkok")
+//        firebaseFirestore.collection("Country").document("Capital").set(cities)
+//            .addOnCompleteListener(object : OnCompleteListener<Void> {
+//                override fun onComplete(p0: Task<Void>) {
+//                    if (p0.isSuccessful) {
+//                        Toast.makeText(this@HomeActivity, "Add successful", Toast.LENGTH_SHORT).show()
+//                    } else {
+//                        Toast.makeText(this@HomeActivity, "Add Fail", Toast.LENGTH_SHORT).show()
+//                    }
+//                }
+// })
+        // ---- Set value ---- SetOptions.merge()
+        /*val city = HashMap<String, Any>()
+        city.put("Singapore", "Singapore")
+        firebaseFirestore.collection("Country").document("Capital").set(city, SetOptions.merge())
+            .addOnCompleteListener(object : OnCompleteListener<Void> {
+                override fun onComplete(p0: Task<Void>) {
+                    if (p0.isSuccessful) {
+                        Toast.makeText(this@HomeActivity, "Add value successfully.", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this@HomeActivity, "Add Fail", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            })*/
+        // ---- Set value with a unique document name
+//        val cities = HashMap<String, Any>()
+//        cities.put("England", "London")
+//        cities.put("France", "Paris")
+//        firebaseFirestore.collection("Country").add(cities).addOnCompleteListener {
+//            if (it.isSuccessful) {
+//                Toast.makeText(this@HomeActivity, "Add cities with unique key successfully", Toast.LENGTH_SHORT).show()
+//            } else{
+//                Toast.makeText(this@HomeActivity, "Add Fail", Toast.LENGTH_SHORT).show()
+//            }
+//        }
+        val documentReference = firebaseFirestore.collection("Country").document("Capital")
+        documentReference.update("VietNam", "DaNang").addOnCompleteListener(object : OnCompleteListener<Void> {
+            override fun onComplete(p0: Task<Void>) {
+                if (p0.isSuccessful) {
+                    Toast.makeText(this@HomeActivity, "Add cities with unique key successfully", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this@HomeActivity, "Add Fail", Toast.LENGTH_SHORT).show()
+                }
+            }
+        })
     }
 
     private fun initView() {
@@ -64,7 +150,6 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
             ValueEventListener {
             override fun onDataChange(p0: DataSnapshot) {
                 languages.clear()
-                Log.i("FirebaseDebug", p0.value.toString())
                 p0.children.forEach {
                     val branch = it.getValue(Branch::class.java)
                     languages.add("${branch?.name}: ${branch?.email}")
@@ -73,8 +158,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
             }
 
             override fun onCancelled(p0: DatabaseError) {
-                Toast.makeText(this@HomeActivity, "Fail to read value!!!", Toast.LENGTH_SHORT)
-                    .show()
+                Toast.makeText(this@HomeActivity, "Fail to read value!!!", Toast.LENGTH_SHORT).show()
                 Log.i("FirebaseDebug", p0.message)
             }
         })
